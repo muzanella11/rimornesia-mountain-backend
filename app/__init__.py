@@ -2,10 +2,12 @@ from dotenv import load_dotenv
 import os
 from flask import Flask
 from app.core.database import Database
+from app.config.database import db_config
 
 load_dotenv()
 
 DB_NAME = os.environ.get('DB_NAME')
+IS_MIGRATE = os.environ.get('PYTHON_MIGRATE')
 
 def create_app(test_config = None):
     # create and configure the app
@@ -15,23 +17,27 @@ def create_app(test_config = None):
     #     DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     # )
 
-    # create connection
-    db = Database().connect(DB_NAME)
+    if IS_MIGRATE == "FALSE":
+        # db instance
+        db_instance = Database()
 
-    # get mysql instance and connection and context
-    mysql_instance = db.get('mysql_instance')
-    mysql_connection = db.get('mysql_connection')
-    mysql_ctx = db.get('mysql_ctx')
-    
-    app.mysql_instance = mysql_instance
-    app.mysql_connection = mysql_connection
-    app.mysql = mysql_ctx
-    app.mysql_close_connection = Database().close_connection(app.mysql_connection, app.mysql)
+        # create connection
+        db = db_instance.connect()
 
-    # app.mysql.execute("show databases")
+        # get mysql instance and connection and context
+        mysql_instance = db.get('mysql_instance')
+        mysql_connection = db.get('mysql_connection')
+        mysql_ctx = db.get('mysql_ctx')
 
-    # for i in app.mysql:
-    #     print(i)
+        app.mysql_instance = mysql_instance
+        app.mysql_connection = mysql_connection
+        app.mysql = mysql_ctx
+        # app.mysql_close_connection = db_instance.close_connection(app.mysql_connection, app.mysql)
+
+        # app.mysql.execute("show databases")
+
+        # for i in app.mysql:
+        #     print(i)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing

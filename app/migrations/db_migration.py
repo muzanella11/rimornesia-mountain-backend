@@ -1,7 +1,10 @@
 from app.core.migrations import Migrations
 from app.migrations.db_structure import DatabaseStructure
+import os
 
-migrate = Migrations({})
+DB_NAME = os.environ.get('DB_NAME')
+
+migrate = Migrations()
 
 # Prepare Tables
 migrate.prepare_tables(
@@ -9,7 +12,7 @@ migrate.prepare_tables(
 )
 
 # Create or Use database
-migrate.create_database()
+migrate.create_database(DB_NAME)
 
 # Create Tables
 migrate.create_table()

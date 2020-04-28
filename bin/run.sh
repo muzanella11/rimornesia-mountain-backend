@@ -1,2 +1,3 @@
 #!/bin/bash
-    flask run
+    export PYTHON_MIGRATE=FALSE \
+    && flask run

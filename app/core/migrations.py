@@ -3,9 +3,11 @@ from __future__ import print_function
 from mysql.connector import errorcode
 from app.core.database import Database
 from app.core.debug_handler import DebugHandler
+from app.config.database import db_config
 import os
 
 class Migrations(object):
+    db_instance = None
     db_connection = None
     mysql_instance = None
     mysql_connection = None
@@ -15,16 +17,17 @@ class Migrations(object):
     DB_NAME = None
     TABLES = {}
 
-    def __init__(self, config):
+    def __init__(self, config = dict()):
         super(Migrations, self).__init__()
+        
+        # Set config
+        self.config = db_config()
 
-        self.DB_NAME = os.environ.get('DB_NAME')
-
-        # Set Config
-        self.config = config
+        # Override DB_NAME
+        self.config['database'] = config.get('database')
         
         # Connect Database
-        self.connect_database(self.DB_NAME)
+        self.connect_database()
 
         # Prepare Tables
         # self.prepare_tables()
@@ -40,23 +43,26 @@ class Migrations(object):
 
         # print('here migration \n')
 
-    def connect_database(self, db_name):
-        self.db_connection = Database().connect(db_name)
+    def connect_database(self):
+        # DB instance
+        self.db_instance = Database(self.config)
+        # Connect to database
+        self.db_connection = self.db_instance.connect()
 
         self.mysql_instance = self.db_connection.get('mysql_instance')
         self.mysql_connection = self.db_connection.get('mysql_connection')
         self.mysql_ctx = self.db_connection.get('mysql_ctx')
 
     def close_connection(self):
-        Database().close_connection(self.mysql_connection, self.mysql_ctx)
+        self.db_instance.close_connection(self.mysql_connection, self.mysql_ctx)
 
-    def create_database(self):
+    def create_database(self, db_name):
         # Create database
-        Database().create_database(self)
+        self.db_instance.create_database(self, db_name)
 
-    def drop_database(self):
+    def drop_database(self, db_name):
         # Drop database
-        Database().drop_database(self)
+        self.db_instance.drop_database(self, db_name)
 
     def create_table(self):
         # Create table
@@ -65,11 +71,11 @@ class Migrations(object):
             action_name = action_raw.get('action')
             action_command = action_raw.get('command')
 
-            Database().execute_command(self, table_name, action_name, action_command)
+            self.db_instance.execute_command(self, table_name, action_name, action_command)
     
     def rename_table(self, before_name, after_name):
         # Rename Table
-        Database().rename_table(self, before_name, after_name)
+        self.db_instance.rename_table(self, before_name, after_name)
 
     def execute_command(self, commands):
         # Execute Command
@@ -78,7 +84,7 @@ class Migrations(object):
             action_name = action_raw.get('action')
             action_command = action_raw.get('command')
 
-            Database().execute_command(self, table_name, action_name, action_command)
+            self.db_instance.execute_command(self, table_name, action_name, action_command)
 
     def prepare_tables(self, tables):
         if not tables:
