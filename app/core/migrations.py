@@ -72,6 +72,12 @@ class Migrations(object):
             action_command = action_raw.get('command')
 
             self.db_instance.execute_command(self, table_name, action_name, action_command)
+
+    def create_begin_process(self, title):
+        print("/******** Begin {} ********/".format(title))
+
+    def create_end_process(self, title):
+        print("/******** End {} ********/\n".format(title))
     
     def rename_table(self, before_name, after_name):
         # Rename Table

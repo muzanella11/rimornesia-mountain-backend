@@ -65,7 +65,7 @@ class Database(object):
         # Create Database
         try:
             print("Checking Database {}: ".format(db_name), end='')
-            context.mysql_ctx.execute("USE {}".format(db_name))
+            context.mysql_ctx.execute("USE `{}`".format(db_name))
         except context.mysql_instance.Error as err:
             print("[NOT EXISTS]")
             print("Database {} does not exists.".format(db_name))
@@ -73,7 +73,7 @@ class Database(object):
                 
                 try:
                     context.mysql_ctx.execute(
-                        "CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8'".format(db_name))
+                        "CREATE DATABASE `{}` DEFAULT CHARACTER SET 'utf8'".format(db_name))
                 except context.mysql_instance.Error as err:
                     print("Failed creating database: {}".format(err))
                     exit(1)
@@ -90,7 +90,7 @@ class Database(object):
         # Drop Database
         try:
             context.mysql_ctx.execute(
-                "DROP DATABASE {}".format(db_name)
+                "DROP DATABASE `{}`".format(db_name)
             )
         except context.mysql_instance.Error as err:
             print("Database {} does not exists.".format(db_name))
@@ -115,7 +115,7 @@ class Database(object):
         # Rename Table
         try:
             context.mysql_ctx.execute(
-                "ALTER TABLE {} RENAME TO {}".format(before_name, after_name)
+                "ALTER TABLE `{}` RENAME TO `{}`".format(before_name, after_name)
             )
         except context.mysql_instance.Error as err:
             print("Table {} does not exist.".format(before_name))
