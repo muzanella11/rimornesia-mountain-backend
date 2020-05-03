@@ -6,13 +6,13 @@ load_dotenv()
 
 def db_config():
     # db configuration
-    config = {
+    config = dict({
         'host': os.environ.get('DB_HOST'),
         'port': os.environ.get('DB_PORT', 3306),
         'user': os.environ.get('DB_USERNAME'),
         'password': os.environ.get('DB_PASSWORD'),
         'database': os.environ.get('DB_NAME')
-    }
+    })
 
     return config
 

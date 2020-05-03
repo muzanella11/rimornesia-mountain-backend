@@ -18,9 +18,15 @@ class Database(object):
         'database': ''
     })
 
-    def __init__(self):
+    def __init__(self, config = None):
         super(Database, self).__init__()
         self.config = db_config()
+
+        if config:
+            self.config = config
+
+    def get_config(self):
+        return self.config
 
     def create_connection(self):
         instance = mysql.connector
@@ -33,10 +39,7 @@ class Database(object):
 
         return result
 
-    def connect(self, db_name):
-        if db_name:
-            self.config['database'] = db_name  
-
+    def connect(self):
         # connecting to database
         self.db_connection = self.create_connection()
 
@@ -47,6 +50,9 @@ class Database(object):
 
         # self.mysql_ctx.execute("show databases")
 
+        # for i in self.mysql_ctx:
+        #     print(i)
+
         result = dict()
 
         result['mysql_instance'] = self.mysql_instance
@@ -55,38 +61,42 @@ class Database(object):
 
         return result
 
-    def create_database(self, context):
+    def create_database(self, context, db_name):
         # Create Database
         try:
-            context.mysql_ctx.execute("USE {}".format(context.DB_NAME))
+            print("Checking Database {}: ".format(db_name), end='')
+            context.mysql_ctx.execute("USE `{}`".format(db_name))
         except context.mysql_instance.Error as err:
-            print("Database {} does not exists.".format(context.DB_NAME))
+            print("[NOT EXISTS]")
+            print("Database {} does not exists.".format(db_name))
             if err.errno == errorcode.ER_BAD_DB_ERROR:
                 
                 try:
                     context.mysql_ctx.execute(
-                        "CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8'".format(context.DB_NAME))
+                        "CREATE DATABASE `{}` DEFAULT CHARACTER SET 'utf8'".format(db_name))
                 except context.mysql_instance.Error as err:
                     print("Failed creating database: {}".format(err))
                     exit(1)
 
-                print("Database {} created successfully.".format(context.DB_NAME))
-                context.mysql_connection.database = context.DB_NAME
+                print("Database {} created successfully.".format(db_name))
+                context.mysql_connection.database = db_name
             else:
                 print(err)
                 exit(1)
+        else:
+            print("[EXISTS]")
 
-    def drop_database(self, context):
+    def drop_database(self, context, db_name):
         # Drop Database
         try:
             context.mysql_ctx.execute(
-                "DROP DATABASE [IF EXISTS] {}".format(context.DB_NAME)
+                "DROP DATABASE `{}`".format(db_name)
             )
         except context.mysql_instance.Error as err:
-            print("Database {} does not exists.".format(context.DB_NAME))
+            print("Database {} does not exists.".format(db_name))
             print(err.msg)
         else:
-            print("Database {} has been droped.".format(context.DB_NAME))
+            print("Database {} has been droped.".format(db_name))
 
     def execute_command(self, context, table_name, action_name, action_command):
         # Execute Command
@@ -105,7 +115,7 @@ class Database(object):
         # Rename Table
         try:
             context.mysql_ctx.execute(
-                "ALTER TABLE {} RENAME TO {}".format(before_name, after_name)
+                "ALTER TABLE `{}` RENAME TO `{}`".format(before_name, after_name)
             )
         except context.mysql_instance.Error as err:
             print("Table {} does not exist.".format(before_name))
