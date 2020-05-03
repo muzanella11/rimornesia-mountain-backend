@@ -4,8 +4,7 @@ class HealthIndicator(object):
     def run(self):
         data = {
             'code': 200,
-            'message': 'Success',
-            'data': []
+            'message': 'Success'
         }
 
         return (
