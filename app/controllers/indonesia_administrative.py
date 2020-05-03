@@ -19,7 +19,7 @@ class IndonesiaAdministrative(BaseControllers):
 
         return self.create_response(data)
 
-    def province(self):
+    def get_list(self, table_name = None):
         data = {
             'code': 200,
             'message': 'Success',
@@ -33,19 +33,20 @@ class IndonesiaAdministrative(BaseControllers):
             'filter': self.request.args
         }
 
-        data_provinces = ModelIndonesiaAdministrative(data_model).get_province()
+        data_sql = getattr(ModelIndonesiaAdministrative(data_model), 'get_list')(table_name)
 
-        data['data'] = data_provinces.get('data')
-        data['total_data'] = data_provinces.get('total_rows')
+        data['data'] = data_sql.get('data')
+        data['total_data'] = data_sql.get('total_rows')
 
         return self.create_response(data)
 
-    def province_by_name(self, name):
-        if re.search('[_!$%^&*()_+|~=`{}\[\]:";\'<>?,.\/\s]', name):
-            return self.create_response({
-                'code': 400,
-                'messages': 'Bad Request'
-            })
+    def get_detail(self, table_name = None, columns = None, value = None):
+        if columns == "name":
+            if re.search('[_!$%^&*()_+|~=`{}\[\]:";\'<>?,.\/\s]', value):
+                return self.create_response({
+                    'code': 400,
+                    'messages': 'Bad Request'
+                })
 
         data = {
             'code': 200,
@@ -54,24 +55,10 @@ class IndonesiaAdministrative(BaseControllers):
             'total_data': 0
         }
 
-        data_provinces = ModelIndonesiaAdministrative().get_province_by_name(name)
+        data_sql = getattr(ModelIndonesiaAdministrative(), 'get_detail_by')(table_name, columns, value)
 
-        data['data'] = data_provinces.get('data')
-        data['total_data'] = data_provinces.get('total_rows')
-
-        return self.create_response(data)
-
-    def province_by_id(self, id):
-        data = {
-            'code': 200,
-            'message': 'Success',
-            'data': [],
-            'total_data': 0
-        }
-
-        data_provinces = ModelIndonesiaAdministrative().get_province_by_id(id)
-
-        data['data'] = data_provinces.get('data')
-        data['total_data'] = data_provinces.get('total_rows')
+        data['data'] = data_sql.get('data')
+        data['total_data'] = data_sql.get('total_rows')
 
         return self.create_response(data)
+        
