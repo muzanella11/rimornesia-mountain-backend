@@ -17,7 +17,7 @@ LIMIT = 1000
 
 ACTION = MigrationsConfig().getAction()
 TABLES = {}
-JOBS_TYPE_GEOCODE = 'regencies'
+JOBS_TYPE_GEOCODE = 'districts'
 
 print('here geocode')
 
@@ -27,7 +27,7 @@ reconnect = False
 # Create or Use database
 jobs.create_database(DB_NAME)
 
-page = 1
+page = 8
 counter_data = 0
 
 while True:
@@ -48,7 +48,7 @@ while True:
             break
 
         for item in data_provinces:
-            province_name = item.get('name')
+            province_name = item.get('name').encode('utf-8')
 
             print('[PREPARE] Find Geocode {}'.format(province_name))
 
@@ -127,7 +127,7 @@ while True:
             break
 
         for item in data_regencies:
-            regency_name = item.get('name')
+            regency_name = item.get('name').encode('utf-8')
 
             print('[PREPARE] Find Geocode {}'.format(regency_name))
 
@@ -182,6 +182,164 @@ while True:
                     TABLES
                 )
                 jobs.create_end_process('Update Table Regencies')
+
+                # Reconnect db because `cursor.execute` cannot run multiple queries
+                reconnect = True
+
+                # Close Connection
+                jobs.close_connection()
+
+                # print('hereee : ', TABLES)
+            else:
+                print('[FAILED]')
+
+    if JOBS_TYPE_GEOCODE == 'districts':
+        # Districts Data
+        request_districts = requests.get('http://localhost:5000/district?page={}&limit={}'.format(page, LIMIT))
+        response_districts = request_districts.json()
+        data_districts = response_districts.get('data')
+
+        districts_result = []
+
+        if data_districts == None:
+            print('[END] Jobs Geocode {}'.format(JOBS_TYPE_GEOCODE))
+            break
+
+        for item in data_districts:
+            district_name = item.get('name').encode('utf-8')
+
+            print('[PREPARE] Find Geocode {}'.format(district_name))
+
+            district_name = district_name.lower()
+            district_name = district_name.split(' ')
+
+            data_temp = []
+
+            for item_district in district_name:
+                data_temp.append(item_district.capitalize())
+
+            data_temp = '+'.join(data_temp)
+
+            districts_result.append(data_temp)
+
+        for item_district_result in districts_result:
+            district_name = item_district_result.replace('+', ' ').upper()
+
+            counter_data = counter_data + 1
+
+            print('[COUNTER] DATA : {}'.format(counter_data))
+
+            print('[FIND] Geocode Data {} '.format(district_name), end='')
+
+            request_geocode = requests.get('{}&address={}'.format(MAPS_URL, item_district_result))
+            request_response = request_geocode.json()
+            result_response = request_response.get('results')
+
+            if len(result_response) > 0:
+                print('[OK]')
+                location = json.dumps(result_response[0].get('geometry').get('location'))
+                result = json.dumps(result_response)
+
+                TABLES['districts'] = {
+                    'action': ACTION.get('update'),
+                    'command': (
+                        "UPDATE `districts`"
+                        " SET location='{}', raw_geocode='{}'"
+                        " WHERE name='{}'".format(location, result, district_name)
+                    )
+                }
+
+                if reconnect == True:
+                    jobs = Jobs()
+                    
+                    # Create or Use database
+                    jobs.create_database(DB_NAME)
+
+                # Execute Command
+                jobs.create_begin_process('Update Table Districts')
+                jobs.execute_command(
+                    TABLES
+                )
+                jobs.create_end_process('Update Table Districts')
+
+                # Reconnect db because `cursor.execute` cannot run multiple queries
+                reconnect = True
+
+                # Close Connection
+                jobs.close_connection()
+
+                # print('hereee : ', TABLES)
+            else:
+                print('[FAILED]')
+
+    if JOBS_TYPE_GEOCODE == 'villages':
+        # Villages Data
+        request_villages = requests.get('http://localhost:5000/village?page={}&limit={}'.format(page, LIMIT))
+        response_villages = request_villages.json()
+        data_villages = response_villages.get('data')
+
+        villages_result = []
+
+        if data_villages == None:
+            print('[END] Jobs Geocode {}'.format(JOBS_TYPE_GEOCODE))
+            break
+
+        for item in data_villages:
+            village_name = item.get('name').encode('utf-8')
+
+            print('[PREPARE] Find Geocode {}'.format(village_name))
+
+            village_name = village_name.lower()
+            village_name = village_name.split(' ')
+
+            data_temp = []
+
+            for item_village in village_name:
+                data_temp.append(item_village.capitalize())
+
+            data_temp = '+'.join(data_temp)
+
+            villages_result.append(data_temp)
+
+        for item_village_result in villages_result:
+            village_name = item_village_result.replace('+', ' ').upper()
+
+            counter_data = counter_data + 1
+
+            print('[COUNTER] DATA : {}'.format(counter_data))
+
+            print('[FIND] Geocode Data {} '.format(village_name), end='')
+
+            request_geocode = requests.get('{}&address={}'.format(MAPS_URL, item_village_result))
+            request_response = request_geocode.json()
+            result_response = request_response.get('results')
+
+            if len(result_response) > 0:
+                print('[OK]')
+                location = json.dumps(result_response[0].get('geometry').get('location'))
+                result = json.dumps(result_response)
+
+                TABLES['villages'] = {
+                    'action': ACTION.get('update'),
+                    'command': (
+                        "UPDATE `villages`"
+                        " SET location='{}', raw_geocode='{}'"
+                        " WHERE name='{}'".format(location, result, village_name)
+                    )
+                }
+
+                if reconnect == True:
+                    jobs = Jobs()
+                    
+                    # Create or Use database
+                    jobs.create_database(DB_NAME)
+
+                # Execute Command
+                jobs.create_begin_process('Update Table Villages')
+                jobs.execute_command(
+                    TABLES
+                )
+                jobs.create_end_process('Update Table Villages')
 
                 # Reconnect db because `cursor.execute` cannot run multiple queries
                 reconnect = True
