@@ -66,6 +66,33 @@ class DatabaseStructure(object):
             )
         }
 
+    def indonesia_mountains (self):
+        self.TABLES['mountains'] = {
+            'action': self.ACTION.get('create'),
+            'command': (
+                "CREATE TABLE `mountains` ("
+                " `id` int(100) NOT NULL AUTO_INCREMENT,"
+                " `name` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,"
+                " `formatted_address` text COLLATE utf8_unicode_ci,"
+                " `province_id` char(2) COLLATE utf8_unicode_ci DEFAULT '',"
+                " `district_id` char(7) COLLATE utf8_unicode_ci DEFAULT '',"
+                " `regency_id` char(4) COLLATE utf8_unicode_ci DEFAULT '',"
+                " `village_id` char(10) COLLATE utf8_unicode_ci DEFAULT '',"
+                " `location` text COLLATE utf8_unicode_ci,"
+                " `raw_location` text COLLATE utf8_unicode_ci,"
+                " PRIMARY KEY (`id`),"
+                " KEY `mountains_province_id_index` (`province_id`),"
+                " KEY `mountains_district_id_index` (`district_id`),"
+                " KEY `mountains_regency_id_index` (`regency_id`),"
+                " KEY `mountains_village_id_index` (`village_id`),"
+                " CONSTRAINT `mountains_district_id_foreign` FOREIGN KEY (`district_id`) REFERENCES `districts` (`id`),"
+                " CONSTRAINT `mountains_province_id_foreign` FOREIGN KEY (`province_id`) REFERENCES `provinces` (`id`),"
+                " CONSTRAINT `mountains_regency_id_foreign` FOREIGN KEY (`regency_id`) REFERENCES `regencies` (`id`),"
+                " CONSTRAINT `mountains_village_id_foreign` FOREIGN KEY (`village_id`) REFERENCES `villages` (`id`)"
+                ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;"
+            )
+        }
+
     # def rename_fields_salaries(self):
     #     action = {}
 

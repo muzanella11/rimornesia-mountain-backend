@@ -27,7 +27,7 @@ reconnect = False
 # Create or Use database
 jobs.create_database(DB_NAME)
 
-page = 8
+page = 1
 counter_data = 0
 
 while True:
