@@ -91,6 +91,13 @@ class DateTime(object):
 
         print('hours : ', self.hours)
 
+    def context_to_string(self, context, format = None):
+        # Context is `datetime`
+        if format != None:
+            return context.strftime("%Y-%m-%d %H:%M:%S")
+
+        return context.strftime("%Y-%m-%d %H:%M:%S")
+
     def timezone(self, formatted = True):
         timezone = strftime("%z", gmtime())
         # timezone = self.server_time_zone

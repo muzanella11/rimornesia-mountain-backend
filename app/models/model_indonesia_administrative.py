@@ -10,6 +10,13 @@ class ModelIndonesiaAdministrative(Models):
 
         sql_rows = self.execute("SELECT * from `{}`".format(self.table_name))
 
+        convert_attribute_list = [
+            'created_at',
+            'updated_at'
+        ]
+
+        sql_rows = self.convert_to_normal_date(sql_rows, convert_attribute_list)
+
         return sql_rows
 
     def get_detail_by(self, table_name = None, columns = None, value = None):
@@ -19,5 +26,12 @@ class ModelIndonesiaAdministrative(Models):
             value = value.replace('-', ' ')
 
         sql_rows = self.execute("SELECT * from `{}` WHERE `{}` = '{}'".format(self.table_name, columns, value))
+
+        convert_attribute_list = [
+            'created_at',
+            'updated_at'
+        ]
+
+        sql_rows = self.convert_to_normal_date(sql_rows, convert_attribute_list)
 
         return sql_rows
