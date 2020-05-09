@@ -31,7 +31,7 @@ reconnect = False
 # Create or Use database
 jobs.create_database(DB_NAME)
 
-page = 11
+page = 1
 counter_province_data = 0
 total_mountain_data = 0
 
@@ -171,8 +171,8 @@ while True:
                     TABLES['mountains'] = {
                         'action': ACTION.get('insert'),
                         'command': (
-                            "INSERT INTO `mountains` (`name`,`formatted_address`, `location`, `raw_location`) VALUES"
-                            " ('{}','{}','{}','{}')".format(name.replace('Gn.', 'Gunung'), formatted_address, location, raw_location)
+                            "INSERT INTO `mountains` (`name`,`formatted_address`, `location`, `raw_location`, `created_at`) VALUES"
+                            " ('{}','{}','{}','{}', {})".format(name.replace('Gn.', 'Gunung'), formatted_address, location, raw_location, 'NOW()')
                         )
                     }
 

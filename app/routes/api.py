@@ -2,6 +2,7 @@ from flask import request
 from app import app
 from app.controllers.health_indicator import HealthIndicator
 from app.controllers.indonesia_administrative import IndonesiaAdministrative
+from app.controllers.mountains import Mountains
 
 @app.route('/api')
 def helloapi():
@@ -54,3 +55,14 @@ def villagedetailapi(value):
         return IndonesiaAdministrative(request).get_detail('villages', 'id', value)
 
     return IndonesiaAdministrative(request).get_detail('villages', 'name', value)
+
+@app.route('/mountain')
+def mountainlistapi():
+    return Mountains(request).get_list('mountains')
+
+@app.route('/mountain/<value>')
+def mountaindetailapi(value):
+    if value.isnumeric():
+        return Mountains(request).get_detail('mountains', 'id', value)
+
+    return Mountains(request).get_detail('mountains', 'name', value)
