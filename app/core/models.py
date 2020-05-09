@@ -27,15 +27,22 @@ class Models(CrudManagement, DateTime):
         if len(attribute_list) == 0:
             return context
 
-        result = []
-        for item in context['data']:
-            for item_attribute in attribute_list:
-                if item.get(item_attribute) != None:
-                    item[item_attribute] = self.context_to_string(item.get(item_attribute))
+        if type(context['data']) == list and len(context['data']) > 0:
+            result = []
+            for item in context['data']:
+                for item_attribute in attribute_list:
+                    if item.get(item_attribute) != None:
+                        item[item_attribute] = self.context_to_string(item.get(item_attribute))
 
-                result.append(item)
+                    result.append(item)
 
-        context['data'] = result
+            context['data'] = result
+        
+        if type(context['data']) == dict and len(context['data']) > 0:
+            for item in context['data']:
+                for item_attribute in attribute_list:
+                    if item == item_attribute and context['data'][item] != None:
+                        context['data'][item_attribute] = self.context_to_string(context['data'][item_attribute])
 
         return context
 

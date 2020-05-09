@@ -11,7 +11,6 @@ class ModelMountains(Models):
         # time_elapsed = self.time_elapsed_string('2019-05-09 18:32:00')
 
         # print('time elapsed : ', time_elapsed)
-        # test log commit
 
         sql_rows = self.execute("SELECT id, name, formatted_address, location, {}, {} from `{}`".format(self.convert_time_zone('created_at'), self.convert_time_zone('updated_at'), self.table_name))
 
