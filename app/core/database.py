@@ -103,6 +103,10 @@ class Database(object):
         try:
             print("[{}] table {}: ".format(action_name, table_name), end='')
             context.mysql_ctx.execute(action_command)
+
+            if action_name == 'INSERT' or action_name == 'UPDATE':
+                context.mysql_connection.commit()
+
         except context.mysql_instance.Error as err:
             print("[FAILED]")
             print("Something wrong when {} table {} :(".format(action_name, table_name))

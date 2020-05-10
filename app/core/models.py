@@ -1,9 +1,10 @@
 from app import app
 from app.core.database import Database
 from app.core.crud_management import CrudManagement
+from app.core.datetime_handler import DateTime
 import json
 
-class Models(CrudManagement):
+class Models(CrudManagement, DateTime):
     table_name = None
     
     def __init__(self, params = None):
@@ -17,6 +18,28 @@ class Models(CrudManagement):
 
     def get_limit_offset(self):
         return "LIMIT {} OFFSET {}".format(self.limit, self.offset)
+
+    def convert_time_zone(self, column):
+        return "CONVERT_TZ(`{}`, '{}', '{}') as {}".format(column, self.get_server_time_zone(), self.timezone(), column)
+
+    def convert_to_normal_date(self, context, attribute_list = []):
+        # context is `sql_rows`
+        if len(attribute_list) == 0:
+            return context
+
+        if type(context['data']) == list and len(context['data']) > 0:
+            for item in context['data']:
+                for item_attribute in attribute_list:
+                    if item.get(item_attribute) != None:
+                        item[item_attribute] = self.context_to_string(item.get(item_attribute))
+        
+        if type(context['data']) == dict and len(context['data']) > 0:
+            for item in context['data']:
+                for item_attribute in attribute_list:
+                    if item == item_attribute and context['data'][item] != None:
+                        context['data'][item_attribute] = self.context_to_string(context['data'][item_attribute])
+
+        return context
 
     def execute(self, command):
         if self.limit > 0:

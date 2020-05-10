@@ -1,6 +1,7 @@
 class MigrationsConfig(object):
     ACTION = {
         'alter': 'ALTER',
+        'update': 'UPDATE',
         'create': 'CREATE',
         'drop': 'DROP',
         'insert': 'INSERT'
