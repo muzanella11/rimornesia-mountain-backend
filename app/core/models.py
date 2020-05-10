@@ -34,9 +34,10 @@ class Models(CrudManagement, DateTime):
                     if item.get(item_attribute) != None:
                         item[item_attribute] = self.context_to_string(item.get(item_attribute))
 
-                    result.append(item)
+                        result.append(item)
 
-            context['data'] = result
+            if len(result) > 0:
+                context['data'] = result
         
         if type(context['data']) == dict and len(context['data']) > 0:
             for item in context['data']:

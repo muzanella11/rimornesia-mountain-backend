@@ -17,11 +17,11 @@ MAPS_SESSION_TOKEN = os.environ.get('MAPS_SESSION_TOKEN')
 MAPS_URL_GEOCODE_JSON = '/maps/api/place/textsearch/json'
 MAPS_URL = '{}{}?key={}&sensor=false&language=ID'.format(MAPS_HOST, MAPS_URL_GEOCODE_JSON, MAPS_API_KEY)
 
-LIMIT = 3
+LIMIT = 1
 
 ACTION = MigrationsConfig().getAction()
 TABLES = {}
-JOBS_TYPE_GEOCODE = 'mountains'
+JOBS_TYPE_GEOCODE = 'mountains_administrative'
 
 print('here mountain')
 
@@ -34,6 +34,8 @@ jobs.create_database(DB_NAME)
 page = 1
 counter_province_data = 0
 total_mountain_data = 0
+
+fa_raw_counter = []
 
 while True:
     print('[RUNNING] Jobs Mountain {}'.format(JOBS_TYPE_GEOCODE))
@@ -110,64 +112,13 @@ while True:
                     location = json.dumps(mountain_item.get('geometry').get('location'))
                     formatted_address = mountain_item.get('formatted_address')
                     raw_address = formatted_address.split(', ')
+                    
                     print('raw address : ', raw_address)
+
                     name = mountain_item.get('name').decode('utf-8')
                     raw_location = json.dumps(mountain_item)
                     
-                    # villages = raw_address[1].lower()
-                    # villages = villages.replace('tim.', 'timur').replace('bar.', 'barat')
-                    # villages = villages.replace('uta.', 'utara').replace('sel.', 'selatan').replace(' ', '-')
-                    # districts = raw_address[2].lower()
-                    # districts = districts.replace('tim.', 'timur').replace('bar.', 'barat')
-                    # districts = districts.replace('uta.', 'utara').replace('sel.', 'selatan')
-                    # districts = districts.replace('kec. ', '').replace(' ', '-')
-                    # regencies = raw_address[3].lower()
-                    # regencies = regencies.replace('tim.', 'timur').replace('bar.', 'barat')
-                    # regencies = regencies.replace('uta.', 'utara').replace('sel.', 'selatan').replace(' ', '-')
-                    # provinces = raw_address[4].lower()
-                    # provinces = provinces.replace('tim.', 'timur').replace('bar.', 'barat')
-                    # provinces = provinces.replace('uta.', 'utara').replace('sel.', 'selatan').replace(' ', '-')
-
-                    # Get Villages ID
-                    # request_villages = requests.get('http://localhost:5000/village/{}'.format(villages.replace('/', '')))
-                    # response_villages = request_villages.json()
-                    # data_villages = response_villages.get('data')
-                    
-                    # if data_villages != None:
-                    #     village_id = data_villages.get('id')
-                    # else:
-                    #     village_id = villages
-
-                    # Get Districts ID
-                    # request_districts = requests.get('http://localhost:5000/district/{}'.format(districts.replace('/', '-')))
-                    # response_districts = request_districts.json()
-                    # data_districts = response_districts.get('data')
-                    
-                    # if data_districts != None:
-                    #     district_id = data_districts.get('id')
-                    # else:
-                    #     district_id = districts
-
-                    # Get Regencies ID
-                    # request_regencies = requests.get('http://localhost:5000/regency/{}'.format(regencies.replace('/', '-')))
-                    # response_regencies = request_regencies.json()
-                    # data_regencies = response_regencies.get('data')
-
-                    # if data_regencies != None:
-                    #     regency_id = data_regencies.get('id')
-                    # else:
-                    #     regency_id = regencies
-
-                    # Get Provinces ID
-                    # request_provinces = requests.get('http://localhost:5000/province/{}'.format(provinces.replace('/', '-')))
-                    # response_provinces = request_provinces.json()
-                    # data_provinces = response_provinces.get('data')
-                    
-                    # if data_provinces != None:
-                    #     province_id = data_provinces.get('id')
-                    # else:
-                    #     province_id = provinces
-
+                    # Insert to mountains
                     TABLES['mountains'] = {
                         'action': ACTION.get('insert'),
                         'command': (
@@ -198,6 +149,153 @@ while True:
                     # print('hereee : ', TABLES)
             else:
                 print('[FAILED]')
+                
+    if JOBS_TYPE_GEOCODE == 'mountains_administrative':
+        # Mountain Data
+        request_mountains = requests.get('http://localhost:5000/mountain?page={}&limit={}'.format(page, LIMIT))
+        response_mountains = request_mountains.json()
+        data_mountains = response_mountains.get('data')
+
+        if data_mountains == None:
+            print('[END] Jobs Geocode {}'.format(JOBS_TYPE_GEOCODE))
+            break
+
+        for item in data_mountains:
+            mountain_name = item.get('name')
+            formatted_address = item.get('formatted_address')
+            fa_raw = formatted_address.split(', ')
+
+            villages = None
+            districts = None
+            regencies = None
+            provinces = None
+
+            village_id = ''
+            district_id = ''
+            regency_id = ''
+            province_id = ''
+
+            if len(fa_raw) == 7:
+                villages = fa_raw[2].lower()
+                villages = villages.replace('tim.', 'timur').replace('bar.', 'barat')
+                villages = villages.replace('uta.', 'utara').replace('sel.', 'selatan').replace(' ', '-')
+                villages = villages.split('/')[0]
+                districts = fa_raw[3].lower()
+                districts = districts.replace('tim.', 'timur').replace('bar.', 'barat')
+                districts = districts.replace('uta.', 'utara').replace('sel.', 'selatan')
+                districts = districts.replace('kec. ', '').replace(' ', '-')
+                districts = districts.split('/')[0]
+                regencies = fa_raw[4].lower()
+                regencies = regencies.replace('tim.', 'timur').replace('bar.', 'barat')
+                regencies = regencies.replace('uta.', 'utara').replace('sel.', 'selatan').replace(' ', '-')
+                regencies = regencies.split('/')[0]
+                provinces = fa_raw[5].lower()
+                provinces = provinces.replace('tim.', 'timur').replace('bar.', 'barat')
+                provinces = provinces.replace('uta.', 'utara').replace('sel.', 'selatan').replace(' ', '-')
+
+            if len(fa_raw) == 6:
+                villages = fa_raw[1].lower()
+                villages = villages.replace('tim.', 'timur').replace('bar.', 'barat')
+                villages = villages.replace('uta.', 'utara').replace('sel.', 'selatan').replace(' ', '-')
+                villages = villages.split('/')[0]
+                districts = fa_raw[2].lower()
+                districts = districts.replace('tim.', 'timur').replace('bar.', 'barat')
+                districts = districts.replace('uta.', 'utara').replace('sel.', 'selatan')
+                districts = districts.replace('kec. ', '').replace(' ', '-')
+                districts = districts.split('/')[0]
+                regencies = fa_raw[3].lower()
+                regencies = regencies.replace('tim.', 'timur').replace('bar.', 'barat')
+                regencies = regencies.replace('uta.', 'utara').replace('sel.', 'selatan').replace(' ', '-')
+                regencies = regencies.split('/')[0]
+                provinces = fa_raw[4].lower()
+                provinces = provinces.replace('tim.', 'timur').replace('bar.', 'barat')
+                provinces = provinces.replace('uta.', 'utara').replace('sel.', 'selatan').replace(' ', '-')
+                provinces = provinces.split('/')[0]
+
+            if len(fa_raw) == 5:
+                districts = fa_raw[1].lower()
+                districts = districts.replace('tim.', 'timur').replace('bar.', 'barat')
+                districts = districts.replace('uta.', 'utara').replace('sel.', 'selatan')
+                districts = districts.replace('kec. ', '').replace(' ', '-')
+                districts = districts.split('/')[0]
+                regencies = fa_raw[2].lower()
+                regencies = regencies.replace('tim.', 'timur').replace('bar.', 'barat')
+                regencies = regencies.replace('uta.', 'utara').replace('sel.', 'selatan').replace(' ', '-')
+                regencies = regencies.split('/')[0]
+                provinces = fa_raw[3].lower()
+                provinces = provinces.replace('tim.', 'timur').replace('bar.', 'barat')
+                provinces = provinces.replace('uta.', 'utara').replace('sel.', 'selatan').replace(' ', '-')
+                provinces = provinces.split('/')[0]
+
+            # Get Villages ID
+            request_villages = requests.get('http://localhost:5000/village/{}'.format(villages))
+            response_villages = request_villages.json()
+            data_villages = response_villages.get('data')
+
+            if data_villages != None:
+                village_id = data_villages.get('id')
+
+            # Get Districts ID
+            request_districts = requests.get('http://localhost:5000/district/{}'.format(districts))
+            response_districts = request_districts.json()
+            data_districts = response_districts.get('data')
+            
+            if data_districts != None:
+                district_id = data_districts.get('id')
+
+            # Get Regencies ID
+            request_regencies = requests.get('http://localhost:5000/regency/{}'.format(regencies))
+            response_regencies = request_regencies.json()
+            data_regencies = response_regencies.get('data')
+
+            if data_regencies != None:
+                regency_id = data_regencies.get('id')
+
+            # Get Provinces ID
+            request_provinces = requests.get('http://localhost:5000/province/{}'.format(provinces))
+            response_provinces = request_provinces.json()
+            data_provinces = response_provinces.get('data')
+            
+            if data_provinces != None:
+                province_id = data_provinces.get('id')
+
+            # Update data
+            TABLES['mountains'] = {
+                'action': ACTION.get('update'),
+                'command': (
+                    "UPDATE mountains"
+                    " SET province_id='{}', district_id='{}', regency_id='{}', village_id='{}', updated_at=now() WHERE name='{}'".format(province_id, district_id, regency_id, village_id, mountain_name)
+                )
+            }
+
+            print('province id : ', " SET province_id={}, district_id={}, regency_id={}, village_id={} WHERE name={}".format(province_id, district_id, regency_id, village_id, mountain_name))
+
+            if reconnect == True:
+                jobs = Jobs()
+                
+                # Create or Use database
+                jobs.create_database(DB_NAME)
+
+            # Execute Command
+            jobs.create_begin_process('Insert Table Provinces')
+            jobs.execute_command(
+                TABLES
+            )
+            jobs.create_end_process('Insert Table Provinces')
+
+            # Reconnect db because `cursor.execute` cannot run multiple queries
+            reconnect = True
+
+            # Close Connection
+            jobs.close_connection()
+
+            # print('formatted : ', len(fa_raw))
+            # print('formatted : ', fa_raw)
+            
+            fa_raw_counter.append(TABLES)
+
+        # print('data fa raw counter : ', fa_raw_counter)
+        # print('data fa raw counter length : ', len(fa_raw_counter))
 
     page = page + 1
 

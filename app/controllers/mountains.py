@@ -25,7 +25,6 @@ class Mountains(BaseControllers):
             'code': 200,
             'message': 'Success',
             'data': [],
-            'time_zone': strftime("%z", gmtime()),
             'total_data': 0
         }
 
