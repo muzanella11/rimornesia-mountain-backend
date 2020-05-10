@@ -29,7 +29,7 @@ class ModelMountains(Models):
         if columns == "name":
             value = value.replace('-', ' ')
 
-        sql_rows = self.execute("SELECT * from `{}` WHERE `{}` = '{}'".format(self.table_name, columns, value))
+        sql_rows = self.execute("SELECT id, name, formatted_address, province_id, district_id, regency_id, village_id, location, {}, {} from `{}` WHERE `{}` = '{}'".format(self.convert_time_zone('created_at'), self.convert_time_zone('updated_at'), self.table_name, columns, value))
 
         convert_attribute_list = [
             'created_at',
