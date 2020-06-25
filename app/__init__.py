@@ -32,6 +32,7 @@ def create_app(test_config = None):
         app.mysql_instance = mysql_instance
         app.mysql_connection = mysql_connection
         app.mysql = mysql_ctx
+        app.mysql_ctx = mysql_ctx
         app.db_instance = db_instance
         # app.mysql_close_connection = db_instance.close_connection(app.mysql_connection, app.mysql)
 

@@ -2,10 +2,13 @@ from app import app
 from app.core.database import Database
 from app.core.crud_management import CrudManagement
 from app.core.datetime_handler import DateTime
+from app.config.database import action_type
+from decimal import Decimal
 import json
 
 class Models(CrudManagement, DateTime):
     table_name = None
+    action_type = action_type()
     
     def __init__(self, params = None):
         super(Models, self).__init__(params)
@@ -84,7 +87,7 @@ class Models(CrudManagement, DateTime):
             action_name = action_raw.get('action')
             action_command = action_raw.get('command')
 
-            app.db_instance.execute_command(self, table_name, action_name, action_command)
+            app.db_instance.execute_command(app, table_name, action_name, action_command)
 
     def connect(self):
         db_instance = Database()

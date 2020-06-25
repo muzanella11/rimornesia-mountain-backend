@@ -3,15 +3,19 @@ from app import app
 from app.controllers.health_indicator import HealthIndicator
 from app.controllers.indonesia_administrative import IndonesiaAdministrative
 from app.controllers.mountains import Mountains
+from app.controllers.climbing_post import ClimbingPost
 
 @app.route('/api')
 def helloapi():
     return "Hello World!"
 
+## Health Check ##
 @app.route('/health')
 def health_indicator():
     return HealthIndicator().run()
+##################
 
+## Indonesia Administrative ##
 @app.route('/province')
 def provincelistapi():
     return IndonesiaAdministrative(request).get_list('provinces')
@@ -55,7 +59,9 @@ def villagedetailapi(value):
         return IndonesiaAdministrative(request).get_detail('villages', 'id', value)
 
     return IndonesiaAdministrative(request).get_detail('villages', 'name', value)
+##################
 
+## Mountain ##
 @app.route('/mountain')
 def mountainlistapi():
     return Mountains(request).get_list('mountains')
@@ -66,3 +72,29 @@ def mountaindetailapi(value):
         return Mountains(request).get_detail('mountains', 'id', value)
 
     return Mountains(request).get_detail('mountains', 'name', value)
+##################
+
+## Climbing Post ##
+@app.route('/climbing-post')
+def climbingpostlistapi():
+    return ClimbingPost(request).get_list()
+
+@app.route('/climbing-post/<value>')
+def climbingpostdetailapi(value):
+    if value.isnumeric():
+        return ClimbingPost(request).get_detail('id', value)
+
+    return ClimbingPost(request).get_detail('name', value)
+
+@app.route('/climbing-post', methods=['POST'])
+def climbingpostcreateapi():
+    return ClimbingPost(request).create_data()
+
+@app.route('/climbing-post/<id>', methods=['PUT'])
+def climbingpostupdateapi(id):
+    return ClimbingPost(request).update_data(id)
+
+@app.route('/climbing-post/<id>', methods=['DELETE'])
+def climbingpostdeleteapi(id):
+    return ClimbingPost(request).delete_data(id)
+##################

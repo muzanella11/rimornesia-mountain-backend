@@ -4,6 +4,18 @@ import os
 
 load_dotenv()
 
+def action_type():
+    ACTION = dict({
+        'alter': 'ALTER',
+        'update': 'UPDATE',
+        'create': 'CREATE',
+        'drop': 'DROP',
+        'insert': 'INSERT',
+        'delete': 'DELETE'
+    })
+
+    return ACTION
+
 def db_config():
     # db configuration
     config = dict({
