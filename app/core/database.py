@@ -107,6 +107,8 @@ class Database(object):
             if action_name == 'INSERT' or action_name == 'UPDATE' or action_name == 'DELETE':
                 context.mysql_connection.commit()
 
+                context.mysql_lastrowid = int(context.mysql_ctx.lastrowid)
+
         except context.mysql_instance.Error as err:
             print("[FAILED]")
             print("Something wrong when {} table {} :(".format(action_name, table_name))

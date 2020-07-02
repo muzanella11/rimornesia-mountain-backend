@@ -2,34 +2,25 @@ from app import app
 from app.core.models import Models
 import json
 
-class ModelClimbingPost(Models):
+class ModelStories(Models):
     def __init__(self, params = None):
-        super(ModelClimbingPost, self).__init__(params)
+        super(ModelStories, self).__init__(params)
 
-        self.table_name = 'climbing_post'
+        self.table_name = 'stories'
 
     def get_list(self):
         sql_rows = self.execute("SELECT \
         id, \
-        mountain_id, \
-        name, \
-        description, \
-        location, \
-        cover, \
-        avatar, \
-        status, \
-        is_open, \
-        rules, \
-        price, \
-        discount, \
-        quota, \
-        is_refundable, \
+        user_id, \
+        climbing_post_id, \
+        content, \
+        is_published, \
         {}, {} from `{}`".format(self.convert_time_zone('created_at'), self.convert_time_zone('updated_at'), self.table_name))
 
         result = []
 
         for item in sql_rows['data']:
-            item['location'] = json.loads(item.get('location'))
+            item['content'] = [int(x) for x in item.get('content').split(',')]
 
             result.append(item)
 
@@ -50,24 +41,15 @@ class ModelClimbingPost(Models):
 
         sql_rows = self.execute("SELECT \
         id, \
-        mountain_id, \
-        name, \
-        description, \
-        location, \
-        cover, \
-        avatar, \
-        status, \
-        is_open, \
-        rules, \
-        price, \
-        discount, \
-        quota, \
-        is_refundable, \
+        user_id, \
+        climbing_post_id, \
+        content, \
+        is_published, \
         {}, {} from `{}` WHERE `{}` = '{}'".format(self.convert_time_zone('created_at'), self.convert_time_zone('updated_at'), self.table_name, columns, value))
 
         if sql_rows['data']:
-            sql_rows['data']['location'] = json.loads(sql_rows['data'].get('location'))
-        
+            sql_rows['data']['content'] = [int(x) for x in sql_rows['data'].get('content').split(',')]
+
         convert_attribute_list = [
             'created_at',
             'updated_at'
@@ -84,19 +66,10 @@ class ModelClimbingPost(Models):
             'action': self.action_type.get('insert'),
             'command': (
                 "INSERT INTO `{}` (\
-                `mountain_id`, \
-                `name`, \
-                `description`, \
-                `location`, \
-                `cover`, \
-                `avatar`, \
-                `status`, \
-                `is_open`, \
-                `rules`, \
-                `price`, \
-                `discount`, \
-                `quota`, \
-                `is_refundable`, \
+                `user_id`, \
+                `climbing_post_id`, \
+                `content`, \
+                `is_published`, \
                 `created_at` \
                 ) VALUES".format(self.table_name) +
                 " (\
@@ -104,29 +77,11 @@ class ModelClimbingPost(Models):
                 '{}',\
                 '{}',\
                 '{}',\
-                '{}',\
-                '{}',\
-                '{}',\
-                '{}',\
-                '{}',\
-                '{}',\
-                '{}',\
-                '{}',\
-                '{}',\
                 NOW())".format(
-                    value.get('mountain_id'), 
-                    value.get('name'), 
-                    value.get('description'), 
-                    value.get('location'), 
-                    value.get('cover'), 
-                    value.get('avatar'), 
-                    value.get('status'), 
-                    value.get('is_open'), 
-                    value.get('rules'), 
-                    value.get('price'), 
-                    value.get('discount'), 
-                    value.get('quota'), 
-                    value.get('is_refundable')
+                    value.get('user_id'), 
+                    value.get('climbing_post_id'), 
+                    value.get('content'),
+                    value.get('is_published')
                 )
             )
         }

@@ -11,22 +11,24 @@ class CrudManagement(object):
     def __init__(self, params = None):
         super(CrudManagement, self).__init__()
 
-        if params != None:
-            self.params = params
-
-            self.action_type = self.params.get('type')
-
-            self.filter_data = self.params.get('filter')
+        if params == None:
+            return 
         
-            self.pagination_shown = self.params.get('pagination')
+        self.params = params
 
-            self.pagination = Pagination({
-                'page': self.filter_data.get('page'),
-                'limit': self.filter_data.get('limit')
-            }).run()
+        self.action_type = self.params.get('type')
 
-            self.limit = self.pagination.get('limit')
-            self.offset = self.pagination.get('offset')
+        self.filter_data = self.params.get('filter')
+    
+        self.pagination_shown = self.params.get('pagination')
 
-            self.find = self.params.get('find')
+        self.pagination = Pagination({
+            'page': self.filter_data.get('page'),
+            'limit': self.filter_data.get('limit')
+        }).run()
+
+        self.limit = self.pagination.get('limit')
+        self.offset = self.pagination.get('offset')
+
+        self.find = self.params.get('find')
 
