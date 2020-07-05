@@ -5,6 +5,7 @@ from app.controllers.indonesia_administrative import IndonesiaAdministrative
 from app.controllers.mountains import Mountains
 from app.controllers.climbing_post import ClimbingPost
 from app.controllers.stories import Stories
+from app.controllers.stories_content import StoriesContent
 
 @app.route('/api')
 def helloapi():
@@ -123,4 +124,29 @@ def storiesupdateapi(id):
 @app.route('/stories/<id>', methods=['DELETE'])
 def storiesdeleteapi(id):
     return Stories(request).delete_data(id)
+##################
+
+## Stories Content ##
+@app.route('/stories-content')
+def storiescontentlistapi():
+    return StoriesContent(request).get_list()
+
+@app.route('/stories-content/<value>')
+def storiescontentdetailapi(value):
+    if value.isnumeric():
+        return StoriesContent(request).get_detail('id', value)
+
+    return StoriesContent(request).get_detail('error', value)
+
+@app.route('/stories-content', methods=['POST'])
+def storiescontentcreateapi():
+    return StoriesContent(request).create_data()
+
+@app.route('/stories-content/<id>', methods=['PUT'])
+def storiescontentupdateapi(id):
+    return StoriesContent(request).update_data(id)
+
+@app.route('/stories-content/<id>', methods=['DELETE'])
+def storiescontentdeleteapi(id):
+    return StoriesContent(request).delete_data(id)
 ##################
