@@ -8,6 +8,9 @@
 # install dependencies
 $ pip install -r requirements.txt
 
+# create uploads directory on app
+$ mkdir uploads
+
 # run flask
 $ flask run 
 

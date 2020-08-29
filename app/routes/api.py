@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, send_from_directory
 from app import app
 from app.controllers.health_indicator import HealthIndicator
 from app.controllers.indonesia_administrative import IndonesiaAdministrative
@@ -6,6 +6,7 @@ from app.controllers.mountains import Mountains
 from app.controllers.climbing_post import ClimbingPost
 from app.controllers.stories import Stories
 from app.controllers.stories_content import StoriesContent
+from app.controllers.uploads import Uploads
 
 @app.route('/api')
 def helloapi():
@@ -149,4 +150,18 @@ def storiescontentupdateapi(id):
 @app.route('/stories-content/<id>', methods=['DELETE'])
 def storiescontentdeleteapi(id):
     return StoriesContent(request).delete_data(id)
+##################
+
+## Uploads ##
+@app.route('/uploads/<path:path>')
+def uploadgetfile(path):
+    return Uploads(request).get_detail(path)
+
+@app.route('/uploads', methods=['POST'])
+def uploadcreateapi():
+    return Uploads(request).create_data()
+
+@app.route('/uploads/delete/<path:path>', methods=['DELETE'])
+def uploaddeletefile(path):
+    return Uploads(request).delete_data(path)
 ##################
