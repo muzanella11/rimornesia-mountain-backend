@@ -1,3 +1,4 @@
+from app import app
 from app.core.controllers import BaseControllers
 from app.models.model_stories_content import ModelStoriesContent
 import re
@@ -91,6 +92,10 @@ class StoriesContent(BaseControllers):
         }
 
         getattr(ModelStoriesContent(), 'create_data')(data_model)
+
+        data['data'] = dict({
+            'lastrowid': app.mysql_lastrowid
+        })
 
         return self.create_response(data)
 

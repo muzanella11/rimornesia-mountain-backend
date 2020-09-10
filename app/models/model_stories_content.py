@@ -17,6 +17,15 @@ class ModelStoriesContent(Models):
         markup, \
         {}, {} from `{}`".format(self.convert_time_zone('created_at'), self.convert_time_zone('updated_at'), self.table_name))
 
+        result = []
+
+        for item in sql_rows['data']:
+            item['markup'] = json.loads(item.get('markup'))
+
+            result.append(item)
+
+        sql_rows['data'] = result
+
         convert_attribute_list = [
             'created_at',
             'updated_at'
@@ -37,6 +46,9 @@ class ModelStoriesContent(Models):
         attachment_layout, \
         markup, \
         {}, {} from `{}` WHERE `{}` = '{}'".format(self.convert_time_zone('created_at'), self.convert_time_zone('updated_at'), self.table_name, columns, value))
+
+        if sql_rows['data']:
+            sql_rows['data']['markup'] = json.loads(sql_rows['data'].get('markup'))
 
         convert_attribute_list = [
             'created_at',
@@ -76,8 +88,6 @@ class ModelStoriesContent(Models):
                 )
             )
         }
-
-        print('ssss : ', action)
 
         self.execute_command(
             action

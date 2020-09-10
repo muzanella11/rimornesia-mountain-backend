@@ -1,5 +1,6 @@
 from app.core.controllers import BaseControllers
 from app.models.model_stories import ModelStories
+from app.models.model_stories_content import ModelStoriesContent
 import re
 import json
 
@@ -38,6 +39,20 @@ class Stories(BaseControllers):
 
         data_sql = getattr(ModelStories(data_model), 'get_list')()
 
+        raw_data = data_sql.get('data')
+
+        for item_raw_data in raw_data:
+            result_content = []
+            data_content = item_raw_data.get('content')
+
+            for item_content_data in data_content:
+                content_data = getattr(ModelStoriesContent(), 'get_detail_by')('id', item_content_data)
+                content_data = content_data.get('data')
+
+                result_content.append(content_data)
+            
+            item_raw_data['content'] = result_content
+
         data['data'] = data_sql.get('data')
         data['total_data'] = data_sql.get('total_rows')
 
@@ -58,6 +73,19 @@ class Stories(BaseControllers):
         }
 
         data_sql = getattr(ModelStories(), 'get_detail_by')(columns, value)
+
+        raw_data = data_sql.get('data')
+
+        result_content = []
+        data_content = raw_data.get('content')
+
+        for item_content_data in data_content:
+            content_data = getattr(ModelStoriesContent(), 'get_detail_by')('id', item_content_data)
+            content_data = content_data.get('data')
+
+            result_content.append(content_data)
+        
+        raw_data['content'] = result_content
 
         data['data'] = data_sql.get('data')
         data['total_data'] = data_sql.get('total_rows')
