@@ -25,15 +25,16 @@ class ModelClimbingPost(Models):
         quota, \
         is_refundable, \
         {}, {} from `{}`".format(self.convert_time_zone('created_at'), self.convert_time_zone('updated_at'), self.table_name))
+        
+        if sql_rows['data']:
+            result = []
 
-        result = []
+            for item in sql_rows['data']:
+                item['location'] = json.loads(item.get('location'))
 
-        for item in sql_rows['data']:
-            item['location'] = json.loads(item.get('location'))
+                result.append(item)
 
-            result.append(item)
-
-        sql_rows['data'] = result
+            sql_rows['data'] = result
 
         convert_attribute_list = [
             'created_at',

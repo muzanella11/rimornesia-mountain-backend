@@ -17,14 +17,15 @@ class ModelStoriesContent(Models):
         markup, \
         {}, {} from `{}`".format(self.convert_time_zone('created_at'), self.convert_time_zone('updated_at'), self.table_name))
 
-        result = []
+        if sql_rows['data']:
+            result = []
 
-        for item in sql_rows['data']:
-            item['markup'] = json.loads(item.get('markup'))
+            for item in sql_rows['data']:
+                item['markup'] = json.loads(item.get('markup'))
 
-            result.append(item)
+                result.append(item)
 
-        sql_rows['data'] = result
+            sql_rows['data'] = result
 
         convert_attribute_list = [
             'created_at',

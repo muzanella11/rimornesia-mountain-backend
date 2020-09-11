@@ -17,14 +17,15 @@ class ModelStories(Models):
         is_published, \
         {}, {} from `{}`".format(self.convert_time_zone('created_at'), self.convert_time_zone('updated_at'), self.table_name))
 
-        result = []
+        if sql_rows['data']:
+            result = []
 
-        for item in sql_rows['data']:
-            item['content'] = [int(x) for x in item.get('content').split(',')]
+            for item in sql_rows['data']:
+                item['content'] = [int(x) for x in item.get('content').split(',')]
 
-            result.append(item)
+                result.append(item)
 
-        sql_rows['data'] = result
+            sql_rows['data'] = result
 
         convert_attribute_list = [
             'created_at',
