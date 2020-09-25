@@ -1,5 +1,6 @@
 from flask import request, send_from_directory
 from app import app
+from app.libraries.slug_validate import SlugValidate
 from app.controllers.health_indicator import HealthIndicator
 from app.controllers.indonesia_administrative import IndonesiaAdministrative
 from app.controllers.mountains import Mountains
@@ -7,6 +8,7 @@ from app.controllers.climbing_post import ClimbingPost
 from app.controllers.stories import Stories
 from app.controllers.stories_content import StoriesContent
 from app.controllers.uploads import Uploads
+from app.controllers.booking import Booking
 
 @app.route('/api')
 def helloapi():
@@ -67,14 +69,17 @@ def villagedetailapi(value):
 ## Mountain ##
 @app.route('/mountain')
 def mountainlistapi():
-    return Mountains(request).get_list('mountains')
+    return Mountains(request).get_list('')
 
 @app.route('/mountain/<value>')
 def mountaindetailapi(value):
     if value.isnumeric():
-        return Mountains(request).get_detail('mountains', 'id', value)
+        return Mountains(request).get_detail('id', value)
 
-    return Mountains(request).get_detail('mountains', 'name', value)
+    if SlugValidate().run(value):
+        return Mountains(request).get_detail('error', value)
+
+    return Mountains(request).get_detail('name', value)
 ##################
 
 ## Climbing Post ##
@@ -86,6 +91,9 @@ def climbingpostlistapi():
 def climbingpostdetailapi(value):
     if value.isnumeric():
         return ClimbingPost(request).get_detail('id', value)
+
+    if SlugValidate().run(value):
+        return ClimbingPost(request).get_detail('error', value)
 
     return ClimbingPost(request).get_detail('name', value)
 
