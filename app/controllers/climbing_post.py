@@ -44,12 +44,11 @@ class ClimbingPost(BaseControllers):
         return self.create_response(data)
 
     def get_detail(self, columns = None, value = None):
-        if columns == "name":
-            if re.search('[_!$%^&*()_+|~=`{}\[\]:";\'<>?,.\/\s]', value):
-                return self.create_response({
-                    'code': 400,
-                    'messages': 'Bad Request'
-                })
+        if columns == "error":
+            return self.create_response({
+                'code': 400,
+                'messages': 'Bad Request'
+            })
 
         data = {
             'code': 200,

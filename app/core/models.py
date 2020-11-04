@@ -25,7 +25,7 @@ class Models(CrudManagement, DateTime):
     def convert_time_zone(self, column):
         return "CONVERT_TZ(`{}`, '{}', '{}') as {}".format(column, self.get_server_time_zone(), self.timezone(), column)
 
-    def convert_to_normal_date(self, context, attribute_list = []):
+    def convert_to_normal_date(self, context, attribute_list = [], format = None):
         # context is `sql_rows`
         if len(attribute_list) == 0:
             return context
@@ -34,13 +34,13 @@ class Models(CrudManagement, DateTime):
             for item in context['data']:
                 for item_attribute in attribute_list:
                     if item.get(item_attribute) != None:
-                        item[item_attribute] = self.context_to_string(item.get(item_attribute))
+                        item[item_attribute] = self.context_to_string(item.get(item_attribute), format)
         
         if type(context['data']) == dict and len(context['data']) > 0:
             for item in context['data']:
                 for item_attribute in attribute_list:
                     if item == item_attribute and context['data'][item] != None:
-                        context['data'][item_attribute] = self.context_to_string(context['data'][item_attribute])
+                        context['data'][item_attribute] = self.context_to_string(context['data'][item_attribute], format)
 
         return context
 

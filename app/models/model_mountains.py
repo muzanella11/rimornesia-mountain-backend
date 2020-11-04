@@ -5,9 +5,9 @@ class ModelMountains(Models):
     def __init__(self, params = None):
         super(ModelMountains, self).__init__(params)
 
-    def get_list(self, table_name = None):
-        self.table_name = table_name
+        self.table_name = 'mountains'
 
+    def get_list(self):
         # time_elapsed = self.time_elapsed_string('2019-05-09 18:32:00')
 
         # print('time elapsed : ', time_elapsed)
@@ -23,9 +23,7 @@ class ModelMountains(Models):
 
         return sql_rows
 
-    def get_detail_by(self, table_name = None, columns = None, value = None):
-        self.table_name = table_name
-
+    def get_detail_by(self, columns = None, value = None):
         if columns == "name":
             value = value.replace('-', ' ')
 
