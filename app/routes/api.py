@@ -160,6 +160,32 @@ def storiescontentdeleteapi(id):
     return StoriesContent(request).delete_data(id)
 ##################
 
+## Booking ##
+@app.route('/booking/code')
+def bookingcodeapi():
+    return Booking(request).get_booking_code()
+
+@app.route('/booking/code/<value>', methods=['POST'])
+def bookingcodeavailabilityapi(value):
+    return Booking(request).get_availability_code(value.upper())
+
+@app.route('/booking')
+def bookinglistapi():
+    return Booking(request).get_list()
+
+@app.route('/booking/<booking_code>')
+def bookingdetailapi(booking_code):
+    return Booking(request).get_detail('code', booking_code.upper())
+
+@app.route('/booking', methods=['POST'])
+def bookingcreateapi():
+    return Booking(request).create_data()
+
+@app.route('/booking/<booking_code>', methods=['PUT'])
+def bookingupdateapi(booking_code):
+    return Booking(request).update_data(booking_code.upper())
+##################
+
 ## Uploads ##
 @app.route('/uploads/<path:path>')
 def uploadgetfile(path):

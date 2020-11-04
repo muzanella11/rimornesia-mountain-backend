@@ -94,7 +94,7 @@ class DateTime(object):
     def context_to_string(self, context, format = None):
         # Context is `datetime`
         if format != None:
-            return context.strftime("%Y-%m-%d %H:%M:%S")
+            return context.strftime(format)
 
         return context.strftime("%Y-%m-%d %H:%M:%S")
 
