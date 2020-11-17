@@ -1,7 +1,6 @@
 # from time import gmtime, strftime
 from time import gmtime, strftime
 from datetime import datetime
-from dateutil import tz
 
 class DateTime(object):
     server_time_zone = '+00:00'
@@ -33,7 +32,7 @@ class DateTime(object):
         self.date_time_now = datetime.now()
 
         if self.is_utc_timezone:
-            self.date_time_now = datetime.now(tz = tz.tzutc())
+            self.date_time_now = datetime.utcnow()
 
         self.date_time_now = self.date_time_now.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -104,7 +103,7 @@ class DateTime(object):
 
         print('hours : ', self.hours)
 
-    def context_to_string(self, context, format = None):
+    def context_to_string(self, context = None, format = None):
         # Context is `datetime`
         if format != None:
             return context.strftime(format)

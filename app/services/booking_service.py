@@ -1,6 +1,8 @@
+from app import app
 from app.libraries.random_string import RandomString
 from app.models.model_booking import ModelBooking
 from app.models.model_booking_type import ModelBookingType
+import requests
 
 class BookingService(object):
     config = {}
@@ -9,6 +11,7 @@ class BookingService(object):
         'total_data': 0
     }
     BOOKING_CODE_LENGTH = 8
+    BILLING_HOST = app.environment.get('APP_BILLING_HOST')
     
     def __init__(self, config = None):
         super(BookingService, self).__init__()
@@ -33,6 +36,11 @@ class BookingService(object):
 
         self.base_result['data'] = data_sql.get('data')
         self.base_result['total_data'] = data_sql.get('total_rows')
+
+        res_payment = requests.get('{}/payment/code'.format(self.BILLING_HOST))
+        res_payment = res_payment.json()
+        payment_data = res_payment.get('data')
+        payment_code = payment_data.get('payment_code')
 
         return self.base_result
 
@@ -90,3 +98,6 @@ class BookingService(object):
         self.base_result['total_data'] = data_sql.get('total_rows')
 
         return self.base_result
+
+    def get_payment_code(self):
+        return 1

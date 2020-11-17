@@ -35,6 +35,7 @@ def create_app(test_config = None):
         app.mysql_ctx = mysql_ctx
         app.mysql_lastrowid = None
         app.db_instance = db_instance
+        app.environment = os.environ
         # app.mysql_close_connection = db_instance.close_connection(app.mysql_connection, app.mysql)
 
         # app.mysql.execute("show databases")
