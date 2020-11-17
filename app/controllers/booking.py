@@ -118,7 +118,7 @@ class Booking(BaseControllers):
         price = request_data.get('price')
         quantity = request_data.get('quantity')
         price_total = request_data.get('price_total')
-        payment_id = request_data.get('payment_id')
+        payment_type = request_data.get('payment_type')
         payment_code = request_data.get('payment_code')
         payment_status = request_data.get('payment_status')
         passenger_manifest = request_data.get('passenger_manifest')
@@ -134,7 +134,7 @@ class Booking(BaseControllers):
             'checkin_date': checkin_date,
             'checkout_date': checkout_date,
             'price': price,
-            'payment_id': payment_id,
+            'payment_type': payment_type,
             'payment_code': payment_code,
             'payment_status': payment_status,
             'quantity': quantity,

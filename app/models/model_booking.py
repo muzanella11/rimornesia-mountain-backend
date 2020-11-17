@@ -20,7 +20,6 @@ class ModelBooking(Models):
         price, \
         quantity, \
         price_total, \
-        payment_id, \
         payment_code, \
         payment_status, \
         passenger_manifest, \
@@ -68,7 +67,6 @@ class ModelBooking(Models):
         price, \
         quantity, \
         price_total, \
-        payment_id, \
         payment_code, \
         payment_status, \
         passenger_manifest, \
@@ -110,14 +108,12 @@ class ModelBooking(Models):
                 `price`, \
                 `quantity`, \
                 `price_total`, \
-                `payment_id`, \
                 `payment_code`, \
                 `payment_status`, \
                 `passenger_manifest`, \
                 `created_at` \
                 ) VALUES".format(self.table_name) +
                 " (\
-                '{}',\
                 '{}',\
                 '{}',\
                 '{}',\
@@ -140,7 +136,6 @@ class ModelBooking(Models):
                     value.get('price'),
                     value.get('quantity'),
                     value.get('price_total'),
-                    value.get('payment_id'), 
                     value.get('payment_code'), 
                     value.get('payment_status'),
                     value.get('passenger_manifest')

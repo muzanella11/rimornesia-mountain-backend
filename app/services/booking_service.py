@@ -34,13 +34,22 @@ class BookingService(object):
                 
                 item_raw_data['type'] = content_data.get('name')
 
+                # Get payment expired status
+                payment_code = item_raw_data.get('payment_code')
+                item_raw_data['payment_expired'] = None
+
+                if payment_code:
+                    res_payment_code = requests.get('{}/payment/{}'.format(self.BILLING_HOST, payment_code))
+                    res_payment_code = res_payment_code.json()
+
+                    payment_data = res_payment_code.get('data')
+
+                    item_raw_data['payment_expired'] = payment_data['is_expired']
+                    item_raw_data['unique_code'] = payment_data['unique_code']
+                
+
         self.base_result['data'] = data_sql.get('data')
         self.base_result['total_data'] = data_sql.get('total_rows')
-
-        res_payment = requests.get('{}/payment/code'.format(self.BILLING_HOST))
-        res_payment = res_payment.json()
-        payment_data = res_payment.get('data')
-        payment_code = payment_data.get('payment_code')
 
         return self.base_result
 
@@ -58,6 +67,19 @@ class BookingService(object):
             
             raw_data['type'] = content_data.get('name')
 
+            # Get payment expired status
+            payment_code = raw_data.get('payment_code')
+            raw_data['payment_expired'] = None
+
+            if payment_code:
+                res_payment_code = requests.get('{}/payment/{}'.format(self.BILLING_HOST, payment_code))
+                res_payment_code = res_payment_code.json()
+
+                payment_data = res_payment_code.get('data')
+
+                raw_data['payment_expired'] = payment_data['is_expired']
+                raw_data['unique_code'] = payment_data['unique_code']
+
         self.base_result['data'] = data_sql.get('data')
         self.base_result['total_data'] = data_sql.get('total_rows')
 
@@ -65,6 +87,26 @@ class BookingService(object):
 
     def create_booking(self, data_model = None):
         # To Do :: Create validation here
+        # Get payment code
+        res_payment_code = requests.get('{}/payment/code'.format(self.BILLING_HOST))
+        res_payment_code = res_payment_code.json()
+        payment_data = res_payment_code.get('data')
+        payment_code = payment_data.get('payment_code')
+
+        data_model['payment_code'] = payment_code
+
+        # Create payment
+        payment_payload = {
+            'type': data_model['payment_type'],
+            'code': data_model['payment_code'],
+            'user_id': data_model['user_id'],
+            'price_total': data_model['price_total'],
+            'unique_code': int(str(data_model['price_total'])[-3:]),
+            'booking_code': data_model['code']
+        }
+        res_payment = requests.post('{}/payment'.format(self.BILLING_HOST), json = payment_payload)
+        res_payment = res_payment.json()
+
         getattr(ModelBooking(), 'create_data')(data_model)
 
     def update_booking(self, data_model = None):
