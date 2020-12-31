@@ -25,7 +25,9 @@ class TokenHandler(object):
         if not self.session_time: return
         if not self.time_by: return
 
-        parse_date = DateTime().context_to_datetime(self.session_time)
+        parse_date = DateTime({
+            'is_utc_timezone': True
+        }).context_to_datetime(self.session_time)
         parse_date = int(parse_date.strftime('%s')) * 1000 # to millisecond
         expired = parse_date
 
@@ -44,12 +46,12 @@ class TokenHandler(object):
         return expired
 
     def check_expired_time(self, expired_time = None):
-        date_time_now = DateTime({
-            'is_utc_timezone': True
-        }).get_date_time_now()
+        date_time_now = DateTime().get_date_time_now()
         expired_time = int(expired_time)
 
-        date_time_now = DateTime().context_to_datetime(date_time_now)
+        date_time_now = DateTime({
+            'is_utc_timezone': True
+        }).context_to_datetime(date_time_now)
         date_time_now = int(date_time_now.strftime('%s')) * 1000 # to millisecond
 
         return date_time_now >= expired_time
