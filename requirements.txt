@@ -20,7 +20,7 @@ importlib-metadata==1.6.0
 importlib-resources==1.4.0
 ipaddress==1.0.23
 itsdangerous==1.1.0
-Jinja2==2.11.2
+Jinja2==2.11.3
 jmespath==0.9.3
 macholib==1.5.1
 MarkupSafe==1.1.1
