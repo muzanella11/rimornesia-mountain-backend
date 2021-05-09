@@ -27,7 +27,7 @@ class RandomString(object):
         if self.config.get('is_return_number'):
             return (string.digits)  
 
-        return (string.letters+string.digits)   
+        return (string.ascii_letters+string.digits)   
 
     def generate(self):
         keylist = [random.choice(self.base_str()) for i in range(self.key_length)]

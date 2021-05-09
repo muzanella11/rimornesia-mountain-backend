@@ -161,13 +161,9 @@ class Booking(BaseControllers):
 
         request_data = self.request.json
 
-        payment_id = request_data.get('payment_id')
-        payment_code = request_data.get('payment_code')
         payment_status = request_data.get('payment_status')
 
-        queries = "payment_id='{}',\
-            payment_code='{}',\
-            payment_status='{}'".format(payment_id, payment_code, payment_status)
+        queries = "payment_status='{}'".format(payment_status)
         
         data_model = {
             'code': booking_code,
