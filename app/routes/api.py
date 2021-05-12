@@ -69,7 +69,7 @@ def villagedetailapi(value):
 ## Mountain ##
 @app.route('/mountain')
 def mountainlistapi():
-    return Mountains(request).get_list('')
+    return Mountains(request).get_list()
 
 @app.route('/mountain/<value>')
 def mountaindetailapi(value):
