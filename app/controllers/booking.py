@@ -1,5 +1,6 @@
 from app.core.controllers import BaseControllers
 from app.services.booking_service import BookingService
+from app.services.ticket_service import TicketService
 import re
 import json
 
@@ -7,7 +8,7 @@ class Booking(BaseControllers):
     request = None
 
     TABLES = {}
-    BOOKING_CODE_LENGTH = 8
+    BOOKING_CODE_LENGTH = 11
 
     def __init__(self, request = None):
         super(Booking, self).__init__()
@@ -120,7 +121,7 @@ class Booking(BaseControllers):
         price_total = request_data.get('price_total')
         payment_type = request_data.get('payment_type')
         payment_code = request_data.get('payment_code')
-        payment_status = request_data.get('payment_status')
+        payment_status = 0 # Payment status default
         passenger_manifest = request_data.get('passenger_manifest')
 
         if passenger_manifest:
@@ -164,6 +165,26 @@ class Booking(BaseControllers):
         payment_status = request_data.get('payment_status')
 
         queries = "payment_status='{}'".format(payment_status)
+        
+        # Get detail booking
+        data_booking = BookingService().generate_booking_detail('code', booking_code)
+        data_booking = data_booking.get('data')
+        
+        booking_type = data_booking.get('type')
+        booking_type = BookingService().get_booking_type(booking_type)
+        booking_type = booking_type.get('data').get('id')
+
+        if booking_type:
+            if data_booking:
+                ticket_code = TicketService().generate_ticket_code()
+
+                data_model_ticket = {
+                    'type': booking_type,
+                    'code': ticket_code,
+                    'booking_code': booking_code
+                }
+
+                TicketService().create_ticket(data_model_ticket)
         
         data_model = {
             'code': booking_code,

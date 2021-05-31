@@ -1,5 +1,5 @@
 from app.core.controllers import BaseControllers
-from app.models.model_climbing_post import ModelClimbingPost
+from app.services.climbing_post_service import ClimbingPostService
 import re
 import json
 
@@ -36,7 +36,7 @@ class ClimbingPost(BaseControllers):
             'filter': self.request.args
         }
 
-        data_sql = getattr(ModelClimbingPost(data_model), 'get_list')()
+        data_sql = ClimbingPostService().generate_climbing_post_list(data_model)
 
         data['data'] = data_sql.get('data')
         data['total_data'] = data_sql.get('total_rows')
@@ -57,7 +57,7 @@ class ClimbingPost(BaseControllers):
             'total_data': 0
         }
 
-        data_sql = getattr(ModelClimbingPost(), 'get_detail_by')(columns, value)
+        data_sql = ClimbingPostService().generate_climbing_post_detail(columns, value)
 
         data['data'] = data_sql.get('data')
         data['total_data'] = data_sql.get('total_rows')
@@ -109,7 +109,7 @@ class ClimbingPost(BaseControllers):
             'is_refundable': is_refundable
         }
 
-        getattr(ModelClimbingPost(), 'create_data')(data_model)
+        ClimbingPostService().create_climbing_post(data_model)
 
         return self.create_response(data)
 
@@ -161,7 +161,7 @@ class ClimbingPost(BaseControllers):
             'data': queries
         }
 
-        getattr(ModelClimbingPost(), 'update_data')(data_model)
+        ClimbingPostService().update_climbing_post(data_model)
 
         return self.create_response(data)
 
@@ -172,7 +172,7 @@ class ClimbingPost(BaseControllers):
             'total_data': 0
         }
 
-        data_sql = getattr(ModelClimbingPost(), 'delete_data')(climbing_post_id)
+        ClimbingPostService().delete_climbing_post(climbing_post_id)
 
         return self.create_response(data)
         

@@ -1,7 +1,5 @@
 from app.core.controllers import BaseControllers
-from app.models.model_mountains import ModelMountains
-from time import gmtime, strftime
-import re
+from app.services.mountains_service import MountainsService
 
 class Mountains(BaseControllers):
     request = None
@@ -34,7 +32,7 @@ class Mountains(BaseControllers):
             'filter': self.request.args
         }
 
-        data_sql = getattr(ModelMountains(data_model), 'get_list')()
+        data_sql = MountainsService().generate_mountain_list(data_model)
 
         data['data'] = data_sql.get('data')
         data['total_data'] = data_sql.get('total_rows')
@@ -55,7 +53,7 @@ class Mountains(BaseControllers):
             'total_data': 0
         }
 
-        data_sql = getattr(ModelMountains(), 'get_detail_by')(columns, value)
+        data_sql = MountainsService().generate_mountain_detail(columns, value)
 
         data['data'] = data_sql.get('data')
         data['total_data'] = data_sql.get('total_rows')

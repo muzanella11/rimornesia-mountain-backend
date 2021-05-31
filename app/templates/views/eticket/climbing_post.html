@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="pdfkit-page-size" content="Legal"/>
+    <meta name="pdfkit-orientation" content="Landscape"/>
+    <title>{{ data['title'] }}</title>
+
+    <style>
+      html {
+        box-sizing: border-box;
+      }
+      
+      *,
+      *:before,
+      *:after {
+        box-sizing: inherit;
+      }
+
+      .row {
+        width: 100%;
+        display: inline-block;
+      }
+
+      .row::before,
+      .row::after {
+        display: table;
+        content: " ";
+        clear: both;
+      }
+
+      .column {
+        padding-right: 16px;
+      }
+
+      .column:last-child {
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <table
+      width="100%"
+    >
+      <tr>
+        <td width="50%">
+          <h1>
+            E-tiket
+          </h1>
+        </td>
+
+        <td width="50%">
+          kanan
+        </td>
+      </tr>
+
+      <tr>
+        <td colspan="2">
+          <div style="margin-bottom: 16px">
+            {{ data['title_type'] }}
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td colspan="2">
+          <div style="position:relative; border-bottom: 2px solid rgba(0,0,0,0.1); padding-bottom: 16px; margin-bottom: 16px;">
+            <div class="row" style="position:relative; width: 100%;">
+              <div class="column" style="float: left; width: 20%;">
+                <h5>
+                  Code
+                </h5>
+
+                <h3>
+                  {{ data.data.booking.code }}
+                </h3>
+              </div>
+  
+              <div class="column" style="float: left; width: 80%;">
+                <div class="row" style="">
+                  <h3>
+                    {{ data.data.booking.item.name }} | {{ data.data.booking.item.mountain.name }}
+                  </h3>
+
+                  <p>
+                    {{ data.data.booking.item.mountain.formatted_address }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" style="position:relative; width: 100%;">
+              <div class="column" style="float: left; width: 20%; content: ''; display: block;">
+                &nbsp;
+              </div>
+  
+              <div class="column" style="float: left; width: 80%;">
+                <div class="row" style="position:relative; width: 100%;">
+                  <div class="column" style="float: left; width: 50%; content: ''; display: block;">
+                    left
+                  </div>
+
+                  <div class="column" style="float: left; width: 50%; content: ''; display: block;">
+                    right
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td colspan="2">
+          <div style="position:relative; border-bottom: 2px solid rgba(0,0,0,0.1); padding-bottom: 16px; margin-bottom: 16px;">
+            <div class="row" style="position:relative; width: 100%;">
+              <div class="column" style="float: left; width: 20%;">
+                <img src="{{ data.data.booking.item.avatar }}" style="width: 100%" />
+              </div>
+  
+              <div class="column" style="float: left; width: 80%;">
+                <div class="row" style="padding-bottom: 8px;">
+                  Detail Pesanan
+                </div>
+
+                <div class="row" style="border-bottom: 2px solid rgba(0,0,0,0.1); padding-bottom: 8px;">
+                  Tamu
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+    <h1>{{ data }}</h1>
+    <h4>Hello World Eticket :)</h4>
+  </body>
+</html>

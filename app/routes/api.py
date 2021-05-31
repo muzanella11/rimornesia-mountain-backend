@@ -9,6 +9,7 @@ from app.controllers.stories import Stories
 from app.controllers.stories_content import StoriesContent
 from app.controllers.uploads import Uploads
 from app.controllers.booking import Booking
+from app.controllers.ticket import Ticket
 
 @app.route('/api')
 def helloapi():
@@ -184,6 +185,40 @@ def bookingcreateapi():
 @app.route('/booking/<booking_code>', methods=['PUT'])
 def bookingupdateapi(booking_code):
     return Booking(request).update_data(booking_code.upper())
+##################
+
+## Ticket ##
+@app.route('/ticket/code')
+def ticketcodeapi():
+    return Ticket(request).get_ticket_code()
+
+@app.route('/ticket/code/<value>', methods=['POST'])
+def ticketcodeavailabilityapi(value):
+    return Ticket(request).get_availability_code(value.upper())
+
+@app.route('/ticket')
+def ticketlistapi():
+    return Ticket(request).get_list()
+
+@app.route('/ticket/<ticket_code>')
+def ticketdetailapi(ticket_code):
+    return Ticket(request).get_detail('code', ticket_code.upper())
+
+@app.route('/ticket', methods=['POST'])
+def ticketcreateapi():
+    return Ticket(request).create_data()
+
+@app.route('/ticket/claim/<ticket_code>', methods=['PUT'])
+def ticketclaimapi(ticket_code):
+    return Ticket(request).claim_ticket(ticket_code.upper())
+
+@app.route('/ticket/refund/<ticket_code>', methods=['PUT'])
+def ticketrefundapi(ticket_code):
+    return Ticket(request).refund_ticket(ticket_code.upper())
+
+@app.route('/ticket/generate/<ticket_code>')
+def ticketgenerateapi(ticket_code):
+    return Ticket(request).generate_eticket(ticket_code.upper())
 ##################
 
 ## Uploads ##

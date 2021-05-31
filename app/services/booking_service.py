@@ -2,6 +2,8 @@ from app import app
 from app.libraries.random_string import RandomString
 from app.models.model_booking import ModelBooking
 from app.models.model_booking_type import ModelBookingType
+from app.models.model_climbing_post import ModelClimbingPost
+from app.services.climbing_post_service import ClimbingPostService
 import requests
 
 class BookingService(object):
@@ -10,7 +12,7 @@ class BookingService(object):
         'data': None,
         'total_data': 0
     }
-    BOOKING_CODE_LENGTH = 8
+    BOOKING_CODE_LENGTH = 11
     BILLING_HOST = app.environment.get('APP_BILLING_HOST')
     
     def __init__(self, config = None):
@@ -34,6 +36,15 @@ class BookingService(object):
                 
                 item_raw_data['type'] = content_data.get('name')
 
+                # Get booking item
+                data_item = item_raw_data.get('item')
+
+                if item_raw_data['type'] == 'climbing_post':
+                    content_data = getattr(ClimbingPostService(), 'generate_climbing_post_detail')('id', data_item)
+                    content_data = content_data.get('data')
+
+                    item_raw_data['item'] = content_data
+
                 # Get payment expired status
                 payment_code = item_raw_data.get('payment_code')
                 item_raw_data['payment_expired'] = None
@@ -48,7 +59,7 @@ class BookingService(object):
                     item_raw_data['unique_code'] = payment_data['unique_code']
                 
 
-        self.base_result['data'] = data_sql.get('data')
+        self.base_result['data'] = raw_data
         self.base_result['total_data'] = data_sql.get('total_rows')
 
         return self.base_result
@@ -67,6 +78,15 @@ class BookingService(object):
             
             raw_data['type'] = content_data.get('name')
 
+            # Get booking item
+            data_item = raw_data.get('item')
+
+            if raw_data['type'] == 'climbing_post':
+                content_data = getattr(ClimbingPostService(), 'generate_climbing_post_detail')('id', data_item)
+                content_data = content_data.get('data')
+
+                raw_data['item'] = content_data
+
             # Get payment expired status
             payment_code = raw_data.get('payment_code')
             raw_data['payment_expired'] = None
@@ -80,7 +100,7 @@ class BookingService(object):
                 raw_data['payment_expired'] = payment_data['is_expired']
                 raw_data['unique_code'] = payment_data['unique_code']
 
-        self.base_result['data'] = data_sql.get('data')
+        self.base_result['data'] = raw_data
         self.base_result['total_data'] = data_sql.get('total_rows')
 
         return self.base_result
@@ -118,7 +138,7 @@ class BookingService(object):
             'key_length': self.BOOKING_CODE_LENGTH
         }).run()
 
-        result = result.upper()
+        result = '{}{}{}'.format('RMNSA', result.upper(), 'BO')
 
         return result
 
@@ -143,3 +163,6 @@ class BookingService(object):
 
     def get_payment_code(self):
         return 1
+
+    def get_booking_type(self, value = None):
+        return getattr(ModelBookingType(), 'get_detail_by')('name', value)
