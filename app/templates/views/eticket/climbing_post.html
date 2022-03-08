@@ -50,7 +50,7 @@
         </td>
 
         <td width="50%">
-          kanan
+          &nbsp;
         </td>
       </tr>
 
@@ -64,9 +64,9 @@
 
       <tr>
         <td colspan="2">
-          <div style="position:relative; border-bottom: 2px solid rgba(0,0,0,0.1); padding-bottom: 16px; margin-bottom: 16px;">
+          <div style="position:relative; margin-bottom: 32px;">
             <div class="row" style="position:relative; width: 100%;">
-              <div class="column" style="float: left; width: 20%;">
+              <div class="column" style="float: left; width: 30%; height: 100%;">
                 <h5>
                   Code
                 </h5>
@@ -76,8 +76,8 @@
                 </h3>
               </div>
   
-              <div class="column" style="float: left; width: 80%;">
-                <div class="row" style="">
+              <div class="column" style="float: left; width: 70%;">
+                <div class="row">
                   <h3>
                     {{ data.data.booking.item.name }} | {{ data.data.booking.item.mountain.name }}
                   </h3>
@@ -90,49 +90,113 @@
             </div>
 
             <div class="row" style="position:relative; width: 100%;">
-              <div class="column" style="float: left; width: 20%; content: ''; display: block;">
+              <div class="column" style="float: left; width: 30%; content: ''; display: block;">
                 &nbsp;
               </div>
   
-              <div class="column" style="float: left; width: 80%;">
+              <div class="column" style="float: left; width: 70%;">
                 <div class="row" style="position:relative; width: 100%;">
                   <div class="column" style="float: left; width: 50%; content: ''; display: block;">
-                    left
+                    <h5 style="margin: 0; padding: 0;">
+                      Checkin
+                    </h5>
+
+                    <div style="position: relative; width: 100%;">
+                      <h2 style="margin: 0; padding: 0;">
+                        {{ data.data.booking.checkin_date_formatted }}
+                      </h2>
+                    </div>
                   </div>
 
                   <div class="column" style="float: left; width: 50%; content: ''; display: block;">
-                    right
+                    <h5 style="margin: 0; padding: 0;">
+                      Checkout
+                    </h5>
+
+                    <div style="position: relative; width: 100%;">
+                      <h2 style="margin: 0; padding: 0;">
+                        {{ data.data.booking.checkout_date_formatted }}
+                      </h2>
+                    </div>
                   </div>
+                </div>
+
+                <div class="row" style="position:relative; width: 100%;">
+                  <h3>
+                    Rules
+                  </h3>
+
+                  <p>
+                    {{ data.data.booking.item.rules }}
+                  </p>
                 </div>
               </div>
             </div>
+
+            <div style="background: rgba(0,0,0,0.1); width: 100%; height: 2px; content: ''; margin-top: 32px;"></div>
           </div>
         </td>
       </tr>
 
       <tr>
         <td colspan="2">
-          <div style="position:relative; border-bottom: 2px solid rgba(0,0,0,0.1); padding-bottom: 16px; margin-bottom: 16px;">
+          <div style="position:relative; margin-bottom: 32px;">
             <div class="row" style="position:relative; width: 100%;">
-              <div class="column" style="float: left; width: 20%;">
-                <img src="{{ data.data.booking.item.avatar }}" style="width: 100%" />
+              <div class="column" style="float: left; width: 30%;">
+                <div style="position: relative; width: 100%; height: 200px; background: url('{{ data.data.booking.item.avatar }}'); background-repeat: no-repeat; background-size: contain;"></div>
               </div>
   
-              <div class="column" style="float: left; width: 80%;">
+              <div class="column" style="float: left; width: 70%;">
                 <div class="row" style="padding-bottom: 8px;">
-                  Detail Pesanan
+                  <h3 style="margin: 0; padding: 0;">
+                    Detail Pesanan
+                  </h3>
                 </div>
 
-                <div class="row" style="border-bottom: 2px solid rgba(0,0,0,0.1); padding-bottom: 8px;">
-                  Tamu
+                <div class="row" style="margin-bottom: 8px;">
+                  <div class="row">
+                    <div class="column" style="float: left; width: 50%; content: ''; display: block;">
+                      Tamu
+                    </div>
+
+                    <div class="column" style="float: left; width: 50%; content: ''; display: block;">
+                      {% for itemVisitor in data.data.booking.passenger_manifest %}
+                      <div class="row">
+                        - {{ itemVisitor.fullname }}
+                      </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+
+                  <div style="background: rgba(0,0,0,0.1); width: 100%; height: 2px; content: ''; margin-top: 8px;"></div>
+                </div>
+
+                <div class="row" style="margin-bottom: 8px;">
+                  <div class="row">
+                    <div class="column" style="float: left; width: 50%; content: ''; display: block;">
+                      Jumlah Tamu
+                    </div>
+
+                    <div class="column" style="float: left; width: 50%; content: ''; display: block;">
+                      {{ data.data.booking.passenger_manifest|length }} Tamu
+                    </div>
+                  </div>
                 </div>
               </div>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.1); width: 100%; height: 2px; content: ''; margin-top: 32px;"></div>
+
+            <div class="row" style="position:relative; width: 100%;">
+              <p>
+                Tunjukkan e-tiket ini kepada petugas saat checkin dan checkout
+              </p>
             </div>
           </div>
         </td>
       </tr>
     </table>
-    <h1>{{ data }}</h1>
-    <h4>Hello World Eticket :)</h4>
+    <!-- <h1>{{ data }}</h1>
+    <h4>Hello World Eticket :)</h4> -->
   </body>
 </html>

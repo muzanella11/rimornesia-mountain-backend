@@ -1,10 +1,12 @@
 from app import app
+from app.core.datetime_handler import DateTime
 from app.libraries.random_string import RandomString
 from app.models.model_ticket import ModelTicket
 from app.models.model_ticket_type import ModelTicketType
 from app.services.booking_service import BookingService
 import requests
 import pdfkit
+import qrcode
 
 class TicketService(object):
     config = {}
@@ -72,6 +74,37 @@ class TicketService(object):
             if booking_code:
                 data_booking = getattr(BookingService(), 'generate_booking_detail')('code', booking_code)
                 data_booking = data_booking.get('data')
+
+                # Create Qrcode
+                input_data = "https://towardsdatascience.com/face-detection-in-10-lines-for-beginners-1787aa1d9127"
+
+                qr = qrcode.QRCode(
+                    version=1,
+                    box_size=10,
+                    border=5
+                )
+
+                qr.add_data(input_data)
+                qr.make(fit=True)
+
+                img = qr.make_image(fill='black', back_color='white')
+                img.save('testqrcode.png')
+
+                print('image :: ', img)
+                
+                # Checkin date formatted
+                if data_booking['checkin_date']:
+                    checkin_date = DateTime().context_to_datetime(data_booking['checkin_date'], "%Y-%m-%d")
+                    checkin_date = DateTime().context_to_string(checkin_date, "%d %b %Y")
+
+                    data_booking['checkin_date_formatted'] = checkin_date
+                
+                # Checkout date formatted
+                if data_booking['checkout_date']:
+                    checkout_date = DateTime().context_to_datetime(data_booking['checkout_date'], "%Y-%m-%d")
+                    checkout_date = DateTime().context_to_string(checkout_date, "%d %b %Y")
+
+                    data_booking['checkout_date_formatted'] = checkout_date
 
                 rawbooking_code = raw_data['booking'] = data_booking
 
