@@ -26,7 +26,7 @@ macholib==1.5.1
 MarkupSafe==1.1.1
 modulegraph==0.10.4
 mysql-connector==2.2.9
-mysql-connector-python==8.0.11
+mysql-connector-python==8.0.14
 pathlib2==2.3.5
 pipenv==2018.11.26
 promise==2.3
