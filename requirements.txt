@@ -30,7 +30,7 @@ mysql-connector-python==8.0.11
 pathlib2==2.3.5
 pipenv==2018.11.26
 promise==2.3
-protobuf==3.11.3
+protobuf==3.18.3
 py2app==0.7.3
 pycparser==2.20
 pycrypto==2.6.1
